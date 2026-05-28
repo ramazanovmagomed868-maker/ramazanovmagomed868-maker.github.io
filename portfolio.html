@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог услуг — Junior Dev</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@300;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111;
+    --border: #222;
+    --accent: #c8f135;
+    --accent2: #3bf;
+    --text: #f0f0f0;
+    --muted: #666;
+    --card: #141414;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    position: relative; z-index: 1;
+    padding: 60px 40px 0;
+    max-width: 1100px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900; font-size: 13px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .status-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease infinite;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative; z-index: 1;
+    padding: 60px 40px 40px;
+    max-width: 1100px; margin: 0 auto;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.3em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(38px, 7vw, 80px);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent);
+  }
+
+  .hero-sub {
+    margin-top: 28px;
+    font-size: 13px; line-height: 1.8;
+    color: var(--muted); max-width: 480px;
+  }
+
+  .stack-pills {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 28px;
+  }
+
+  .pill {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill.active { border-color: var(--accent); color: var(--accent); }
+
+  /* DIVIDER */
+  .divider {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 40px auto;
+    padding: 0 40px;
+  }
+  .divider hr {
+    border: none; border-top: 1px solid var(--border);
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 32px;
+  }
+
+  /* SERVICES GRID */
+  .services {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 40px 60px;
+    animation: fadeUp 0.9s 0.2s ease both;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .card {
+    background: var(--card);
+    padding: 32px;
+    transition: background 0.25s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.3s ease;
+  }
+
+  .card:hover { background: #191919; }
+  .card:hover::before { height: 100%; }
+
+  .card-num {
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.2em; margin-bottom: 20px;
+  }
+
+  .card-icon { font-size: 28px; margin-bottom: 14px; }
+
+  .card h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700; font-size: 14px;
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .card p {
+    font-size: 12px; line-height: 1.8;
+    color: var(--muted);
+  }
+
+  .card-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 20px;
+  }
+  .tag {
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--accent2); 
+    border: 1px solid rgba(51,187,255,0.2);
+    padding: 3px 8px; border-radius: 2px;
+  }
+
+  .card-price {
+    margin-top: 20px;
+    font-size: 12px; color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* WHY SECTION */
+  .why {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 40px 60px;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+  }
+
+  .why-item {
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+  }
+
+  .why-item h4 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 12px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .why-item p {
+    font-size: 11px; line-height: 1.8;
+    color: var(--muted);
+  }
+
+  /* CTA */
+  .cta-block {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 40px 80px;
+    animation: fadeUp 1s 0.35s ease both;
+  }
+
+  .cta-inner {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-inner::after {
+    content: '{ }';
+    position: absolute; right: 48px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 120px; font-weight: 900;
+    color: rgba(200, 241, 53, 0.04);
+    pointer-events: none;
+  }
+
+  .cta-text h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 900; line-height: 1.2;
+  }
+
+  .cta-text p {
+    font-size: 12px; color: var(--muted);
+    margin-top: 10px; line-height: 1.8;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700; font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 16px 32px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; z-index: 1;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 241, 53, 0.25);
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 20px 40px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  @media (max-width: 600px) {
+    header, .hero, .services, .why, .cta-block { padding-left: 20px; padding-right: 20px; }
+    .cta-inner { padding: 28px; }
+    .cta-inner::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DEV_CATALOG</div>
+  <div class="status-badge">
+    <div class="status-dot"></div>
+    Открыт к заказам
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow">// Фриланс · Junior Developer · AI-powered</div>
+  <h1>Разработка<br>под <em>ключ</em><br>без лишних трат</h1>
+  <p class="hero-sub">
+    Python · C++ · C# · Computer Science<br>
+    Делаю сам + использую нейросети для скорости и качества.
+    Первые заказы — быстро, честно, по делу.
+  </p>
+  <div class="stack-pills">
+    <span class="pill active">Python</span>
+    <span class="pill">C++</span>
+    <span class="pill">C#</span>
+    <span class="pill">Telegram Bot API</span>
+    <span class="pill">AI/нейросети</span>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<section class="services">
+  <div class="section-label">// 01 — каталог услуг</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-num">001</div>
+      <div class="card-icon">🤖</div>
+      <h3>Telegram-бот под задачу</h3>
+      <p>Боты для бизнеса: запись клиентов, рассылки, FAQ, опросы, мини-магазин, интеграция с таблицами. Уже есть опыт — делаю быстро.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">aiogram</span>
+        <span class="tag">SQLite</span>
+      </div>
+      <div class="card-price">от 2 000 ₽</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">002</div>
+      <div class="card-icon">🔍</div>
+      <h3>Парсер данных</h3>
+      <p>Соберу данные с любого сайта: товары, цены, контакты, вакансии. Выгружу в Excel/CSV/JSON. Быстро и аккуратно.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">BeautifulSoup</span>
+        <span class="tag">Selenium</span>
+      </div>
+      <div class="card-price">от 1 500 ₽</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">003</div>
+      <div class="card-icon">⚡</div>
+      <h3>Автоматизация рутины</h3>
+      <p>Скрипт для автоматической обработки файлов, отправки писем, работы с таблицами Excel, переименования файлов и т.д.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">openpyxl</span>
+        <span class="tag">pandas</span>
+      </div>
+      <div class="card-price">от 1 000 ₽</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">004</div>
+      <div class="card-icon">🧠</div>
+      <h3>Чат-бот с AI внутри</h3>
+      <p>Бот в Telegram или на сайте, который отвечает как умный консультант. Подключу GPT/Claude к твоей базе знаний или FAQ.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">GPT API</span>
+        <span class="tag">Telegram</span>
+      </div>
+      <div class="card-price">от 3 500 ₽</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">005</div>
+      <div class="card-icon">📊</div>
+      <h3>Обработка и анализ данных</h3>
+      <p>Почищу датасет, построю графики, сделаю сводную таблицу, найду закономерности. Отчёт в PDF или Excel.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">pandas</span>
+        <span class="tag">matplotlib</span>
+      </div>
+      <div class="card-price">от 2 000 ₽</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">006</div>
+      <div class="card-icon">🎮</div>
+      <h3>Простая программа / утилита</h3>
+      <p>Консольная утилита, небольшое десктопное приложение, игра на Python/C#. Подойдёт для учебных проектов и прототипов.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">C#</span>
+        <span class="tag">C++</span>
+      </div>
+      <div class="card-price">от 1 500 ₽</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">007</div>
+      <div class="card-icon">📝</div>
+      <h3>Помощь с учебными заданиями</h3>
+      <p>Объясню код, помогу с лабораторными, курсовыми по программированию. Python, C++, алгоритмы, базы данных.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">C++</span>
+        <span class="tag">Алгоритмы</span>
+      </div>
+      <div class="card-price">от 500 ₽ / час</div>
+    </div>
+
+    <div class="card">
+      <div class="card-num">008</div>
+      <div class="card-icon">🔧</div>
+      <h3>Доработка / исправление кода</h3>
+      <p>Найду баг, перепишу кривой код, добавлю функцию в готовый проект. Работаю с чужим кодом без паники.</p>
+      <div class="card-tags">
+        <span class="tag">Python</span>
+        <span class="tag">C#</span>
+        <span class="tag">Debug</span>
+      </div>
+      <div class="card-price">от 500 ₽</div>
+    </div>
+
+  </div>
+</section>
+
+<section class="why">
+  <div class="section-label">// 02 — почему я</div>
+  <div class="why-grid">
+    <div class="why-item">
+      <h4>Быстро</h4>
+      <p>Использую нейросети как инструмент — это реально ускоряет работу в 2–3 раза без потери качества.</p>
+    </div>
+    <div class="why-item">
+      <h4>Честно</h4>
+      <p>Скажу прямо, если задача выходит за мои возможности — не буду тянуть деньги и время.</p>
+    </div>
+    <div class="why-item">
+      <h4>Дёшево</h4>
+      <p>Цены ниже рынка — я только набираю портфолио, поэтому первые клиенты получают выгоду.</p>
+    </div>
+    <div class="why-item">
+      <h4>На связи</h4>
+      <p>Отвечаю в Telegram быстро. Правки и поддержка — без лишних споров.</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta-block">
+  <div class="cta-inner">
+    <div class="cta-text">
+      <h2>Обсудим<br>твою задачу?</h2>
+      <p>Напиши — отвечу быстро, оценю бесплатно.<br>Первым клиентам — скидка 20%.</p>
+    </div>
+    <a href="https://t.me/ВАШ_НИК" class="cta-btn">Написать в Telegram →</a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 — Junior Dev</span>
+  <span>Python · C++ · C# · AI</span>
+  <span>Открыт к заказам</span>
+</footer>
+
+</body>
+</html>
